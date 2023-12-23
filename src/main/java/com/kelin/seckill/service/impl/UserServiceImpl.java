@@ -5,16 +5,17 @@ import com.kelin.seckill.pojo.User;
 import com.kelin.seckill.mapper.UserMapper;
 import com.kelin.seckill.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kelin.seckill.utils.CookieUtil;
 import com.kelin.seckill.utils.MD5Util;
-import com.kelin.seckill.utils.ValidatorUtil;
+import com.kelin.seckill.utils.UUIDUtil;
 import com.kelin.seckill.vo.LoginVo;
 import com.kelin.seckill.vo.RespBean;
 import com.kelin.seckill.vo.RespBeanEnum;
-import freemarker.template.utility.StringUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
@@ -31,7 +32,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     UserMapper userMapper;
 
     @Override
-    public RespBean doLogin(LoginVo payload) {
+    public RespBean doLogin(LoginVo payload, HttpServletRequest request, HttpServletResponse response) {
         String mobile = payload.getMobile();
         String password = payload.getPassword();
 
@@ -45,6 +46,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
         }
 
+        String ticket = UUIDUtil.uuid();
+        request.getSession().setAttribute(ticket, user);
+        CookieUtil.setCookie(request, response, "userTicket", ticket);
         return RespBean.success();
     }
 }
