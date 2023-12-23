@@ -65,3 +65,9 @@ https://baomidou.com/pages/d357af/#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B
 完成上述两步骤后，就可以将注解类添加到需要的地方去完成校验
 
 具体的实现可以参考注解类 **IsMobile** 和校验类 **IsMobileValidator**，以及实际应用的地方 **LoginVo** 类
+
+### 异常处理
+* 先添加 **@ControllerAdvice** 注解
+* 然后添加 **@ExceptionHandler** 注解来处理所有异常
+
+通过上述两步实现了 Controller 层的所有异常的处理，具体实现参考 **GlobalException** 和 **GlobalExceptionHandler**
