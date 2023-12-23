@@ -11,7 +11,9 @@ import com.kelin.seckill.utils.UUIDUtil;
 import com.kelin.seckill.vo.LoginVo;
 import com.kelin.seckill.vo.RespBean;
 import com.kelin.seckill.vo.RespBeanEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     @Override
     public RespBean doLogin(LoginVo payload, HttpServletRequest request, HttpServletResponse response) {
         String mobile = payload.getMobile();
@@ -47,8 +52,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
 
         String ticket = UUIDUtil.uuid();
-        request.getSession().setAttribute(ticket, user);
+        redisTemplate.opsForValue().set("user:" + ticket, user);
+        // request.getSession().setAttribute(ticket, user);
         CookieUtil.setCookie(request, response, "userTicket", ticket);
         return RespBean.success();
+    }
+
+    @Override
+    public User getUserByCookie(String ticket) {
+        if (StringUtils.isEmpty(ticket)) {
+            return null;
+        }
+        User user = (User) redisTemplate.opsForValue().get("user:" + ticket);
+        return user;
     }
 }
