@@ -1,5 +1,6 @@
 package com.kelin.seckill.service.impl;
 
+import com.kelin.seckill.exception.GlobalException;
 import com.kelin.seckill.pojo.User;
 import com.kelin.seckill.mapper.UserMapper;
 import com.kelin.seckill.service.IUserService;
@@ -36,12 +37,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         User user = userMapper.selectById(mobile);
         if (Objects.isNull(user)) {
-            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
+            throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
         }
 
         // 后端是两次 md5 保存，所以这里对前端上传的密码再进行一次 md5 的计算
         if (!MD5Util.fromPassToDBPass(password, user.getSlat()).equals(user.getPassword())) {
-            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
+            throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
         }
 
         return RespBean.success();
