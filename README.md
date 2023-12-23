@@ -1,7 +1,11 @@
 # Java 高并发秒杀项目
 
 ## 背景
-通过手撸一个实际项目来学习 Java 高并发相关知识。下面会记录项目开发过程中的各种问题以及对应的技术原理
+本项目是对 B 站教学视频：《半天带你用-springBoot、Redis轻松实现Java高并发秒杀系统》的一个记录，借此学习 Java 高并发等相关知识。
+
+教学视频地址如下
+
+https://www.bilibili.com/video/BV1sf4y1L7KE?p=1&vd_source=4b068d7ba228906300002a95a14d4b6b
 
 ## 技术方案
 TODO
@@ -34,7 +38,9 @@ mvn clean install
 1. 第一次加密是前端到后端时进行 md5 加密，这是为了防止用户密码在网路中明文传输被截获；
 2. 第二次是后端存入数据库时再进行 md5 加密，这是为了防止数据库被盗后，单次加密的 MD5 容易被碰撞解码
 
-参考地址：https://developer.aliyun.com/article/636337
+参考地址
+
+https://developer.aliyun.com/article/636337
 
 ### MD5 加密的验签原理
 MD5 加密是一种信息摘要技术，可以将任何长度的信息经过计算最终都得出固定的 128 位长度的字符串，并且原文有任何改动后，计算结果都会不同。使用 MD5 加密传输的原因是因为在互联网上传输数据有被第三方盗用以及篡改的风险。
@@ -46,7 +52,9 @@ MD5 加密和验签原理如下：
 以上就是 MD5 验签的过程
 
 ### mybatis 代码自动生成
-参考地址：https://baomidou.com/pages/d357af/#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B
+参考地址
+
+https://baomidou.com/pages/d357af/#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B
 
 实际的实现参考 **CodeGenerator** 类
 
