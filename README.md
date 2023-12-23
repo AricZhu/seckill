@@ -21,9 +21,9 @@ create table t_user(
 )
 ```
 
-## 细节记录
+## 笔记
 
-### 依赖更新
+### maven 依赖更新
 当包的版本修改后，可以运行下面的命令重新进行依赖安装构建：
 ```bash
 mvn clean install
