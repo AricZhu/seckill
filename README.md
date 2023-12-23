@@ -78,3 +78,12 @@ https://baomidou.com/pages/d357af/#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B
 具体实现：通过一个实现了 **WebMvcConfigurer** 接口的配置类，并重写 **addArgumentResolvers** 方法，添加自定义的类即可。
 
 实例可看 **WebConfig**、**UserArgumentResolver** 这两个类，并在 /goods/toList 接口中直接使用了 User 参数
+
+### 分布式 session
+问：为什么需要分布式 session ？
+
+答：在多机部署的环境下，不用分布式 session 会导致用户登陆态消失，需要重新登陆
+
+问：如何实现分布式 sessin ？
+
+答：一般通过 redis 实现，即将 session 信息存到 redis 中，并且 redis 会单独部署到其他机器。当后端需要用户信息的时候，直接从 redis 中获取即可。
