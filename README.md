@@ -71,3 +71,10 @@ https://baomidou.com/pages/d357af/#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B
 * 然后添加 **@ExceptionHandler** 注解来处理所有异常
 
 通过上述两步实现了 Controller 层的所有异常的处理，具体实现参考 **GlobalException** 和 **GlobalExceptionHandler**
+
+### 自定义参数解析
+作用：通过自定义参数解析，可以将参数直接传递给 Controller 层
+
+具体实现：通过一个实现了 **WebMvcConfigurer** 接口的配置类，并重写 **addArgumentResolvers** 方法，添加自定义的类即可。
+
+实例可看 **WebConfig**、**UserArgumentResolver** 这两个类，并在 /goods/toList 接口中直接使用了 User 参数
