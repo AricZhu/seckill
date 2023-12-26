@@ -139,3 +139,21 @@ https://baomidou.com/pages/d357af/#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B
 问：如何实现分布式 sessin ？
 
 答：一般通过 redis 实现，即将 session 信息存到 redis 中，并且 redis 会单独部署到其他机器。当后端需要用户信息的时候，直接从 redis 中获取即可。
+
+### TPS vs QPS
+**【TPS】**
+
+全称：Transactions Per Second，即每秒处理事务数，一个完整的事务包括了从客户端发起请求开始，到服务端最终返回结束，具体包含以下3件事：
+  * 客户端发送请求
+  * 服务端内部处理
+  * 服务端返回给用户
+
+上述3个过程，假设1秒能完成10次，那么 TPS 就是 10
+
+**【QPS】**
+
+全称：Queries Per Second，即每秒查询数，比如客户端在1秒内向服务端发起了20次的接口查询，那么 QPS 就是 20
+
+参考地址
+
+https://cloud.tencent.com/developer/article/1579814
