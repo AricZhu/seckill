@@ -20,6 +20,11 @@ public class GoodsController {
     @Autowired
     IUserService userService;
 
+    /**
+     * 接口压测记录：
+     * mac: QPS 752
+     * linux: QPS 313
+     */
     @RequestMapping("/toList")
     public String toList(Model model, User user) {
         model.addAttribute("user", user);
