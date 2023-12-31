@@ -69,7 +69,7 @@ CREATE TABLE `t_seckill_order` (
 )ENGINE = INNODB AUTO_INCREMENT=3 DEFAULT CHARSET = utf8mb4;
 
 
-INSERT INTO t_user (id, nickname, password, slat) values (17712345678, 'aric', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d'),(17712345677, 'aric2', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d'),(17712345676, 'aric3', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d'),(17712345675, 'aric4', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d'),(17712345674, 'aric5', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d');
+INSERT INTO t_user (id, nickname, password, slat) values (17712345678, 'aric', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d');
 
 insert into t_goods values(1, 'IPHONE12', 'IPHONE12 64G', '/img/iphone12.png', 'IPHONE 12 64GB', '6299.00', 100),(2, 'IPHONE12 PRO', 'IPHONE12 PRO 128GB', 'IPHONE12 PRO 128GB', '/img/iphone12pro.png', '9299.00', 100);
 
