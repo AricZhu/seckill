@@ -13,6 +13,8 @@ public enum RespBeanEnum {
     BINDING_ERROR(500003, "参数校验错误"),
     EMPTY_STOCK(500004, "库存不足"),
     REPEAT_SECKILL(500005, "每人限购一件"),
+    MOBILE_NOT_EXISTS(500006, "用户不存在"),
+    PASSWORD_UPDATE_FAIL(500007, "密码更新失败"),
     ;
 
     private final Integer code;
