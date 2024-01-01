@@ -36,7 +36,7 @@ public class GoodsController {
     ThymeleafViewResolver thymeleafViewResolver;
 
     /**
-     * 接口压测记录：QPS - 682
+     * 原始接口压测记录：QPS - 682
      * 优化后（使用 redis 缓存优化）压测记录：QPS - 1753
      */
     @RequestMapping(value = "/toList",produces = "text/html;charset=utf-8")
