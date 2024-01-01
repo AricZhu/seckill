@@ -36,11 +36,12 @@ public class GoodsController {
     ThymeleafViewResolver thymeleafViewResolver;
 
     /**
-     * 接口压测记录：QPS 752
-     * 优化后（使用 redis 缓存优化）压测记录：QPS
+     * 接口压测记录：QPS - 682
+     * 优化后（使用 redis 缓存优化）压测记录：QPS - 1753
      */
     @RequestMapping(value = "/toList",produces = "text/html;charset=utf-8")
     @ResponseBody
+//    @RequestMapping("/toList")
     public String toList(Model model, User user, HttpServletRequest request, HttpServletResponse response) {
         // 优化：将页面缓存到 redis 中
         ValueOperations valueOperations = redisTemplate.opsForValue();
@@ -58,6 +59,11 @@ public class GoodsController {
             valueOperations.set("goodsList", html, 60, TimeUnit.SECONDS);
         }
         return html;
+
+        // 未缓存的代码
+//        model.addAttribute("user", user);
+//        model.addAttribute("goodsList", goodsService.findGoodsVo());
+//        return "goodsList";
     }
 
     @RequestMapping(value = "/toDetail/{goodsId}",produces = "text/html;charset=utf-8")
