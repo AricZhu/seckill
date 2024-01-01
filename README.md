@@ -159,3 +159,9 @@ https://baomidou.com/pages/d357af/#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B
 参考地址
 
 https://cloud.tencent.com/developer/article/1579814
+
+### 优化
+#### 商品页面添加缓存
+在本项目中，通过将页面缓存到 redis 中，来提高性能。具体可看 **GoodsController** 中的代码
+
+**PS**：现在一般都是前后端分离了，前端静态资源单独部署到 CDN 上

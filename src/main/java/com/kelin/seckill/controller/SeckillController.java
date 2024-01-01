@@ -33,8 +33,7 @@ public class SeckillController {
      * 1. 校验库存
      * 2. 校验用户是否有重复秒杀商品
      *
-     * mac: QPS 507
-     * linux: QPS 305
+     * 接口压测记录：QPS 507
      */
     @RequestMapping("/doSeckill")
     public String doSeckill(Model model, User user, Long goodsId) {
