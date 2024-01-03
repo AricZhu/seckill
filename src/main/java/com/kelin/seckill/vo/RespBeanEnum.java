@@ -15,6 +15,7 @@ public enum RespBeanEnum {
     REPEAT_SECKILL(500005, "每人限购一件"),
     MOBILE_NOT_EXISTS(500006, "用户不存在"),
     PASSWORD_UPDATE_FAIL(500007, "密码更新失败"),
+    SESSION_ERROR(500008, "用户不存在"),
     ;
 
     private final Integer code;

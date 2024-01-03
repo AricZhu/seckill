@@ -8,11 +8,14 @@ import com.kelin.seckill.service.IGoodsService;
 import com.kelin.seckill.service.IOrderService;
 import com.kelin.seckill.service.ISeckillOrderService;
 import com.kelin.seckill.vo.GoodsVo;
+import com.kelin.seckill.vo.RespBean;
 import com.kelin.seckill.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Objects;
 
@@ -35,30 +38,26 @@ public class SeckillController {
      *
      * 接口压测记录：QPS 507
      */
-    @RequestMapping("/doSeckill")
-    public String doSeckill(Model model, User user, Long goodsId) {
+    @PostMapping("/doSeckill")
+    @ResponseBody
+    public RespBean doSeckill(Model model, User user, Long goodsId) {
         if (Objects.isNull(user)) {
-            return "login";
+            return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
-        model.addAttribute("user", user);
         GoodsVo goods = goodsService.findGoodVoById(goodsId);
         // 1. 判断库存是否不足
         if (goods.getStockCount() < 1) {
-            model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
-            return "secKillFail";
+            return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
         // 2. 判断用户是否重复下单
         LambdaQueryWrapper<SeckillOrder> query = new LambdaQueryWrapper<>();
         query.eq(SeckillOrder::getUserId, user.getId()).eq(SeckillOrder::getGoodsId, goodsId);
         SeckillOrder seckillOrder = seckillOrderService.getOne(query);
         if (!Objects.isNull(seckillOrder)) {
-            model.addAttribute("errmsg", RespBeanEnum.REPEAT_SECKILL.getMessage());
-            return "secKillFail";
+            return RespBean.error(RespBeanEnum.REPEAT_SECKILL);
         }
         Order order = orderService.seckill(user, goods);
-        model.addAttribute("order", order);
-        model.addAttribute("goods", goods);
 
-        return "orderDetail";
+        return RespBean.success(order);
     }
 }
