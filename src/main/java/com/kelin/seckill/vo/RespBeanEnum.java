@@ -16,6 +16,7 @@ public enum RespBeanEnum {
     MOBILE_NOT_EXISTS(500006, "用户不存在"),
     PASSWORD_UPDATE_FAIL(500007, "密码更新失败"),
     SESSION_ERROR(500008, "用户不存在"),
+    ORDER_NOT_EXIST(500009, "订单不存在"),
     ;
 
     private final Integer code;

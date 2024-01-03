@@ -1,16 +1,20 @@
 package com.kelin.seckill.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.kelin.seckill.exception.GlobalException;
 import com.kelin.seckill.pojo.Order;
 import com.kelin.seckill.mapper.OrderMapper;
 import com.kelin.seckill.pojo.SeckillGoods;
 import com.kelin.seckill.pojo.SeckillOrder;
 import com.kelin.seckill.pojo.User;
+import com.kelin.seckill.service.IGoodsService;
 import com.kelin.seckill.service.IOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kelin.seckill.service.ISeckillGoodsService;
 import com.kelin.seckill.service.ISeckillOrderService;
 import com.kelin.seckill.vo.GoodsVo;
+import com.kelin.seckill.vo.OrderDetailVo;
+import com.kelin.seckill.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +31,16 @@ import java.util.Date;
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
     @Autowired
-    ISeckillGoodsService seckillGoodsService;
+    private ISeckillGoodsService seckillGoodsService;
 
     @Autowired
-    OrderMapper orderMapper;
+    private OrderMapper orderMapper;
 
     @Autowired
-    ISeckillOrderService seckillOrderService;
+    private ISeckillOrderService seckillOrderService;
+
+    @Autowired
+    private IGoodsService goodsService;
 
     /**
      * 1. 商品库存 - 1
@@ -68,5 +75,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         seckillOrderService.save(seckillOrder);
 
         return order;
+    }
+
+    @Override
+    public OrderDetailVo detail(Long orderId) {
+        if (orderId == null) {
+            throw new GlobalException(RespBeanEnum.ORDER_NOT_EXIST);
+        }
+
+        Order order = orderMapper.selectById(orderId);
+        GoodsVo goodsVo = goodsService.findGoodVoById(order.getGoodsId());
+
+        OrderDetailVo detail = new OrderDetailVo();
+        detail.setOrder(order);
+        detail.setGoodsVo(goodsVo);
+
+        return detail;
     }
 }
