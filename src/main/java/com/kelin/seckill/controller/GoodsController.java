@@ -3,7 +3,9 @@ package com.kelin.seckill.controller;
 import com.kelin.seckill.pojo.User;
 import com.kelin.seckill.service.IGoodsService;
 import com.kelin.seckill.service.IUserService;
+import com.kelin.seckill.vo.DetailVo;
 import com.kelin.seckill.vo.GoodsVo;
+import com.kelin.seckill.vo.RespBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -66,18 +68,10 @@ public class GoodsController {
 //        return "goodsList";
     }
 
-    @RequestMapping(value = "/toDetail/{goodsId}",produces = "text/html;charset=utf-8")
+    @RequestMapping("/toDetail/{goodsId}")
     @ResponseBody
-    public String toDetail(Model model, User user, @PathVariable Long goodsId, HttpServletRequest request, HttpServletResponse response) {
-        ValueOperations valueOperations = redisTemplate.opsForValue();
-        String html = (String) valueOperations.get("goodsDetail");
-        if (!StringUtils.isEmpty(html)) {
-            return html;
-        }
-
-        model.addAttribute("user", user);
+    public RespBean toDetail(Model model, User user, @PathVariable Long goodsId) {
         GoodsVo good = goodsService.findGoodVoById(goodsId);
-        model.addAttribute("goods", good);
 
         Date startDate = good.getStartDate();
         Date endDate = good.getEndDate();
@@ -96,15 +90,12 @@ public class GoodsController {
             remainSeconds = -1;
         }
 
-        model.addAttribute("secKillStatus", secKillStatus);
-        model.addAttribute("remainSeconds", remainSeconds);
+        DetailVo detailVo = new DetailVo();
+        detailVo.setUser(user);
+        detailVo.setGoodsVo(good);
+        detailVo.setSecKillStatus(secKillStatus);
+        detailVo.setRemainSeconds(remainSeconds);
 
-        WebContext context = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
-        html = thymeleafViewResolver.getTemplateEngine().process("goodsDetail", context);
-        if (!StringUtils.isEmpty(html)) {
-            valueOperations.set("goodsDetail", html, 60, TimeUnit.SECONDS);
-        }
-
-        return html;
+        return RespBean.success(detailVo);
     }
 }
