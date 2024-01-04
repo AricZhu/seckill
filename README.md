@@ -165,3 +165,48 @@ https://cloud.tencent.com/developer/article/1579814
 在本项目中，通过将页面缓存到 redis 中，来提高性能。具体可看 **GoodsController** 中的代码
 
 **PS**：现在一般都是前后端分离了，前端静态资源单独部署到 CDN 上
+
+### 库存超卖问题
+在更新库存时增加是否大于 0 的判断，来解决库存超卖的问题，代码修改如下：
+
+未修改前的代码：
+```
+// OrderServiceImpl.java
+seckillGoodsService.updateById(seckillGoods);
+```
+
+修改后的代码：
+```
+// OrderServiceImpl.java
+boolean result = seckillGoodsService.update(new UpdateWrapper<SeckillGoods>().setSql("stock_count = stock_count - 1").eq("goods_id", goods.getId()).gt("stock_count", 0));
+if (!result) {
+    return null;
+}
+```
+
+原因分析：
+
+虽然在更新前做了库存数量的判断，判断的代码如下，但是判断的代码和实际更新库存的代码这两者并不是原子操作，因此会有并发问题，所以改成了在更新时也做了库存是否大于 0 的判断，从而避免这种并发问题。（PS: 上述修改后的代码理论上应该也存在并发问题，只是没有测试出来，待后期验证）
+
+```
+// SeckillController.java
+// 1. 判断库存是否不足
+if (goods.getStockCount() < 1) {
+    return RespBean.error(RespBeanEnum.EMPTY_STOCK);
+}
+```
+
+同时还做了一个优化，即第二部的重复订单判断从原先的查数据库的形式改为了查 redis 的方式，代码如下，通过 redis 缓存可以避免数据库接口查询慢的问题，提高接口性能
+
+```
+// OrderServiceImpl.java
+// 订单创建成功后，保存到 redis 缓存中
+redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goods.getId(), seckillOrder);
+
+// SeckillController.java
+// 2. 判断用户是否重复下单, 改为 redis 缓存中读取
+SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goods.getId());
+if (!Objects.isNull(seckillOrder)) {
+    return RespBean.error(RespBeanEnum.REPEAT_SECKILL);
+}
+```

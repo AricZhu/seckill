@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class UserUtil {
     private static void createUser(int count) throws Exception {
-        /*
         // 如果已经创建好用户，直接使用查询
         Connection conn = getConn();
 
@@ -32,7 +31,8 @@ public class UserUtil {
             user.setSlat(resultSet.getString("slat"));
             users.add(user);
         }
-        */
+        /*
+        // 未创建用户时，使用下面的代码进行创建
         ArrayList<User> users = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             User user = new User();
@@ -60,6 +60,7 @@ public class UserUtil {
         pstmt.clearParameters();
         conn.close();
         System.out.println("insert to db successfully.");
+         */
         // 登陆后生成 userTicket
         String urlString = "http://localhost:8080/login/doLogin";
         File file = new File("/Users/kelin.zrh/Downloads/config.txt");
