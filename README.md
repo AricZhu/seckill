@@ -210,3 +210,5 @@ if (!Objects.isNull(seckillOrder)) {
     return RespBean.error(RespBeanEnum.REPEAT_SECKILL);
 }
 ```
+
+代码变更细节请查看：fb9b01e
