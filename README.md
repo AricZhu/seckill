@@ -162,7 +162,7 @@ https://cloud.tencent.com/developer/article/1579814
 
 ### 优化
 整体的优化主要有一下三个方向：
-1. 通过 redis 预检库存，减少数据库的访问
+1. 通过 redis 预减库存，减少数据库的访问
 2. 内存标记，减少 redis 的访问
 3. 队列缓存，异步下单
 
