@@ -71,7 +71,7 @@ public class SeckillController implements InitializingBean {
         if (emptyStockMap.get(goodsId)) {
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
-        // 原子性减1
+        // 原子性减1，也可以通过 LUA 脚本来实现原子性操作，关于 LUA 脚本这里不做展开
         Long stock = valueOperations.decrement("seckillGoods:" + goodsId);
         if (stock < 0) {
             emptyStockMap.put(goodsId, true);
