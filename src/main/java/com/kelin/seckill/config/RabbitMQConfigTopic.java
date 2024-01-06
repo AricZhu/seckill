@@ -1,14 +1,14 @@
-//package com.kelin.seckill.config;
-//
-//import org.springframework.amqp.core.Binding;
-//import org.springframework.amqp.core.BindingBuilder;
-//import org.springframework.amqp.core.Queue;
-//import org.springframework.amqp.core.TopicExchange;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//
-//@Configuration
-//public class RabbitMQConfigTopic {
+package com.kelin.seckill.config;
+
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class RabbitMQConfigTopic {
 //    private static final String QUEUE01 = "queue_topic01";
 //    private static final String QUEUE02 = "queue_topic02";
 //    private static final String EXCHANGE = "topicExchange";
@@ -39,5 +39,23 @@
 //    public Binding binding02() {
 //        return BindingBuilder.bind(queue02()).to(topicExchange()).with(ROUTINGKEY02);
 //    }
-//
-//}
+
+    private static final String QUEUE = "seckillQueue";
+    private static final String EXCHANGE = "seckillExchange";
+
+
+    @Bean
+    public Queue queue() {
+        return new Queue(QUEUE);
+    }
+
+    @Bean
+    public TopicExchange topicExchange() {
+        return new TopicExchange(EXCHANGE);
+    }
+
+    @Bean
+    public Binding binding02() {
+        return BindingBuilder.bind(queue()).to(topicExchange()).with("seckill.#");
+    }
+}
