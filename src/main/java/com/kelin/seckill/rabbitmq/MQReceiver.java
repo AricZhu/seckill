@@ -1,6 +1,7 @@
 package com.kelin.seckill.rabbitmq;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +41,17 @@ public class MQReceiver {
     @RabbitListener(queues = "queue_topic02")
     public void receiver06(Object msg) {
         log.info("queue_topic02 接收消息：" + msg);
+    }
+
+    @RabbitListener(queues = "queue_header01")
+    public void receiver07(Message message) {
+        log.info("queue01接收Message 对象: " + message);
+        log.info("queueu01接收消息：" + new String(message.getBody()));
+    }
+
+    @RabbitListener(queues = "queue_header02")
+    public void receiver08(Message message) {
+        log.info("queue02接收Message 对象: " + message);
+        log.info("queueu02接收消息：" + new String(message.getBody()));
     }
 }
