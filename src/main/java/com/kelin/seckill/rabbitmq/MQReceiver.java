@@ -21,4 +21,14 @@ public class MQReceiver {
     public void receive02(Object msg) {
         log.info("Queue02 接收消息：" + msg);
     }
+
+    @RabbitListener(queues = "queue_direct01")
+    public void receive03(Object msg) {
+        log.info("queue_direct01 接收消息: " + msg);
+    }
+
+    @RabbitListener(queues = "queue_direct02")
+    public void receiver04(Object msg) {
+        log.info("queue_direct02 接收消息：" + msg);
+    }
 }

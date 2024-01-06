@@ -41,4 +41,16 @@ public class UserController {
     public void mq01() {
         mqSender.send("Hello Fanout!");
     }
+
+    @RequestMapping("/mq/direct01")
+    @ResponseBody
+    public void mq02() {
+        mqSender.send01("Hello direct red.");
+    }
+
+    @RequestMapping("/mq/direct02")
+    @ResponseBody
+    public void mq03() {
+        mqSender.send02("Hello direct green.");
+    }
 }
