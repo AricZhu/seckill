@@ -145,9 +145,14 @@ public class SeckillController implements InitializingBean {
 
     @RequestMapping(value="/path", method = RequestMethod.GET)
     @ResponseBody
-    public RespBean getPath(User user, Long goodsId) {
+    public RespBean getPath(User user, Long goodsId, String captcha) {
         if (Objects.isNull(user)) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
+        }
+
+        boolean check = orderService.checkCaptcha(user, goodsId, captcha);
+        if (!check) {
+            return RespBean.error(RespBeanEnum.ERROR_CAPTCHA);
         }
 
         String str = orderService.createPath(user, goodsId);
