@@ -45,7 +45,7 @@
 <!--                    <input type="hidden" name="goodsId" id="goodsId">-->
 <!--                    <button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>-->
 <!--                </form>-->
-                <button class="btn btn-primary btn-block" type="button" id="buyButton" id="buyButton" onclick="doSeckill()">
+                <button class="btn btn-primary btn-block" type="button" id="buyButton" id="buyButton" onclick="getSeckillPath()">
                     立即秒杀
                     <input type="hidden" name="goodsId" id="goodsId">
                 </button>
@@ -71,17 +71,40 @@
         getDetails();
     });
 
-    function doSeckill() {
+    function doSeckill(path) {
         $.ajax({
-            url: '/seckill/doSeckill',
+            url: '/seckill/' + path + '/doSeckill',
             type: 'POST',
             data: {
-                goodsId: $('#goodsId').val()
+                goodsId: $('#goodsId').val(),
             },
             success: function (data) {
                 if (data.code == 200) {
 <!--                    window.location.href = '/orderDetail.html?orderId=' + data.obj.id;-->
                     getResult($('#goodsId').val());
+                } else {
+                    layer.msg('客户端请求错误');
+                }
+            },
+            error: function () {
+                layer.msg('客户端请求错误');
+            }
+        })
+    }
+
+    function getSeckillPath() {
+        const goodsId = $('#goodsId').val();
+        g_showLoading();
+        $.ajax({
+            url: '/seckill/path',
+            type: 'GET',
+            data: {
+                goodsId: goodsId,
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    const path = data.obj;
+                    doSeckill(path);
                 } else {
                     layer.msg('客户端请求错误');
                 }

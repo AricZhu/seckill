@@ -13,9 +13,12 @@ import com.kelin.seckill.service.IOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kelin.seckill.service.ISeckillGoodsService;
 import com.kelin.seckill.service.ISeckillOrderService;
+import com.kelin.seckill.utils.MD5Util;
+import com.kelin.seckill.utils.UUIDUtil;
 import com.kelin.seckill.vo.GoodsVo;
 import com.kelin.seckill.vo.OrderDetailVo;
 import com.kelin.seckill.vo.RespBeanEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -23,7 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -108,5 +113,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         detail.setGoodsVo(goodsVo);
 
         return detail;
+    }
+
+    @Override
+    public String createPath(User user, Long goodsId) {
+        String str = MD5Util.md5(UUIDUtil.uuid() + "123456");
+        redisTemplate.opsForValue().set("seckillPath:" + user.getId() + ":" + goodsId, str, 60, TimeUnit.SECONDS);
+        return str;
+    }
+
+    @Override
+    public boolean checkPath(User user, Long goodsId, String path) {
+        if (Objects.isNull(user) || goodsId < 0 || StringUtils.isEmpty(path)) {
+            return false;
+        }
+
+        String redisPath = (String) redisTemplate.opsForValue().get("seckillPath:" + user.getId() + ":" + goodsId);
+
+        return path.equals(redisPath);
     }
 }

@@ -21,10 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -56,14 +53,20 @@ public class SeckillController implements InitializingBean {
      * 接口压测记录：QPS 507
      * 优化后压测：QPS 1822
      */
-    @PostMapping("/doSeckill")
+    @PostMapping("/{path}/doSeckill")
     @ResponseBody
-    public RespBean doSeckill(Model model, User user, Long goodsId) throws InterruptedException {
+    public RespBean doSeckill(@PathVariable String path, User user, Long goodsId) throws InterruptedException {
         if (Objects.isNull(user)) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
 
         ValueOperations valueOperations = redisTemplate.opsForValue();
+
+        boolean check = orderService.checkPath(user, goodsId, path);
+        if (!check) {
+            return RespBean.error(RespBeanEnum.REQUEST_ILLEGAL);
+        }
+
         SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
         if (!Objects.isNull(seckillOrder)) {
             return RespBean.error(RespBeanEnum.REPEAT_SECKILL);
@@ -130,5 +133,16 @@ public class SeckillController implements InitializingBean {
         }
         Long orderId = seckillOrderService.getResult(user, goodsId);
         return RespBean.success(orderId);
+    }
+
+    @RequestMapping(value="/path", method = RequestMethod.GET)
+    @ResponseBody
+    public RespBean getPath(User user, Long goodsId) {
+        if (Objects.isNull(user)) {
+            return RespBean.error(RespBeanEnum.SESSION_ERROR);
+        }
+
+        String str = orderService.createPath(user, goodsId);
+        return RespBean.success(str);
     }
 }
