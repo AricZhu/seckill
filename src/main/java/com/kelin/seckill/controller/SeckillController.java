@@ -2,6 +2,7 @@ package com.kelin.seckill.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.kelin.seckill.config.AccessLimit;
 import com.kelin.seckill.exception.GlobalException;
 import com.kelin.seckill.pojo.Order;
 import com.kelin.seckill.pojo.SeckillMessage;
@@ -144,25 +145,13 @@ public class SeckillController implements InitializingBean {
         return RespBean.success(orderId);
     }
 
+    @AccessLimit(second = 5, maxCount = 5, needLogin = true)
     @RequestMapping(value="/path", method = RequestMethod.GET)
     @ResponseBody
     public RespBean getPath(User user, Long goodsId, String captcha, HttpServletRequest request) {
         if (Objects.isNull(user)) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
-
-        // 接口限流，同一个用户 5s 内最多请求5次
-        ValueOperations valueOperations = redisTemplate.opsForValue();
-        String uri = request.getRequestURI();
-        Integer count = (Integer) valueOperations.get(uri + ":" + user.getId());
-        if (count == null) {
-            valueOperations.set(uri + ":" + user.getId(), 1, 5, TimeUnit.SECONDS);
-        } else if (count < 5) {
-            valueOperations.increment(uri + ":" + user.getId());
-        } else {
-            return RespBean.error(RespBeanEnum.ACCESS_LIMIT);
-        }
-
 
         boolean check = orderService.checkCaptcha(user, goodsId, captcha);
         if (!check) {
