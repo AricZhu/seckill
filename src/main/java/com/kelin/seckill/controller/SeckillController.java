@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
@@ -145,10 +146,23 @@ public class SeckillController implements InitializingBean {
 
     @RequestMapping(value="/path", method = RequestMethod.GET)
     @ResponseBody
-    public RespBean getPath(User user, Long goodsId, String captcha) {
+    public RespBean getPath(User user, Long goodsId, String captcha, HttpServletRequest request) {
         if (Objects.isNull(user)) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
+
+        // 接口限流，同一个用户 5s 内最多请求5次
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        String uri = request.getRequestURI();
+        Integer count = (Integer) valueOperations.get(uri + ":" + user.getId());
+        if (count == null) {
+            valueOperations.set(uri + ":" + user.getId(), 1, 5, TimeUnit.SECONDS);
+        } else if (count < 5) {
+            valueOperations.increment(uri + ":" + user.getId());
+        } else {
+            return RespBean.error(RespBeanEnum.ACCESS_LIMIT);
+        }
+
 
         boolean check = orderService.checkCaptcha(user, goodsId, captcha);
         if (!check) {

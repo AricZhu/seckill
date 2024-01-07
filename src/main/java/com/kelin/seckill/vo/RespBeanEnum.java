@@ -19,6 +19,7 @@ public enum RespBeanEnum {
     ORDER_NOT_EXIST(500009, "订单不存在"),
     REQUEST_ILLEGAL(500010, "请求非法，请重新尝试"),
     ERROR_CAPTCHA(500011, "验证码错误"),
+    ACCESS_LIMIT(500012, "接口限流"),
     ;
 
     private final Integer code;
