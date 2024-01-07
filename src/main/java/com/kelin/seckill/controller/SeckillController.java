@@ -2,6 +2,7 @@ package com.kelin.seckill.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.kelin.seckill.exception.GlobalException;
 import com.kelin.seckill.pojo.Order;
 import com.kelin.seckill.pojo.SeckillMessage;
 import com.kelin.seckill.pojo.SeckillOrder;
@@ -13,6 +14,9 @@ import com.kelin.seckill.service.ISeckillOrderService;
 import com.kelin.seckill.vo.GoodsVo;
 import com.kelin.seckill.vo.RespBean;
 import com.kelin.seckill.vo.RespBeanEnum;
+import com.wf.captcha.ArithmeticCaptcha;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,10 +27,14 @@ import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/seckill")
+@Slf4j
 public class SeckillController implements InitializingBean {
     @Autowired
     private IGoodsService goodsService;
@@ -144,5 +152,27 @@ public class SeckillController implements InitializingBean {
 
         String str = orderService.createPath(user, goodsId);
         return RespBean.success(str);
+    }
+
+    @RequestMapping(value="/captcha", method = RequestMethod.GET)
+    public void verifyCode(User user, Long goodsId, HttpServletResponse response) {
+        if (Objects.isNull(user) || goodsId < 0) {
+            throw new GlobalException(RespBeanEnum.REQUEST_ILLEGAL);
+        }
+
+        response.setContentType("image/jpg");
+        response.setHeader("Pargam", "No-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+
+        ArithmeticCaptcha captcha = new ArithmeticCaptcha(130, 32, 3);
+        redisTemplate.opsForValue().set("captcha:" + user.getId() + ":" + goodsId, captcha.text(), 300, TimeUnit.SECONDS);
+
+        try {
+            captcha.out(response.getOutputStream());
+        } catch (IOException e) {
+            log.error("验证码生成失败: " + e.getMessage());
+        }
+
     }
 }
